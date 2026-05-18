@@ -1,4 +1,4 @@
-# Cyrillix — Real-Time Cyrillic Transliteration Daemon
+# Zerkalo — Real-Time Cyrillic Transliteration Daemon
 ## Technical Specification
 
 Version: 0.1
@@ -9,9 +9,9 @@ Architecture: Native Quartz Event Tap (low latency)
 
 # 1. Project Goal
 
-Create a native low-latency macOS daemon capable of intercepting keyboard events globally and transforming latin keystrokes into Cyrillic characters in real-time.
+Native low-latency macOS daemon capable of intercepting keyboard events globally and transforming latin keystrokes into Cyrillic characters in real-time.
 
-The software must:
+The software :
 - work system-wide,
 - have near-zero latency,
 - avoid fake typing glitches,
@@ -36,11 +36,9 @@ The software must:
 - No copy/paste
 - No visible input lag
 
----
-
 # 3. Technical Architecture
 
-```text
+text
 Keyboard
    ↓
 macOS HID
