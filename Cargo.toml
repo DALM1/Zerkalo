@@ -1,0 +1,10 @@
+[package]
+name = "zerkalo"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+core-graphics = "0.23"
+core-foundation = "0.9"
+lazy_static = "1.4"
+foreign-types-shared = "0.3"
