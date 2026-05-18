@@ -68,23 +68,16 @@ impl TransliterationEngine {
 
         self.buffer.push(c);
 
-        // Try to match the longest possible sequence in the buffer
-        // We only check sequences ending with the current char
         for len in (2..=4).rev() {
             if self.buffer.len() >= len {
                 let tail = &self.buffer[self.buffer.len() - len..];
                 if let Some(cyr) = self.multi_map.get(tail) {
-                    // Found a multi-char match!
-                    // We need to replace the previous (len - 1) chars
-                    // Wait, this logic is tricky because we already sent the previous chars.
-                    // So we need to send BACKSPACES.
                     let backspaces = len - 1;
                     return TransliterationAction::Replace(backspaces, cyr.clone());
                 }
             }
         }
 
-        // No multi-char match, try single char
         if let Some(cyr) = self.single_map.get(&c) {
             return TransliterationAction::Convert(cyr.clone());
         }
@@ -95,8 +88,8 @@ impl TransliterationEngine {
 
 pub enum TransliterationAction {
     None,
-    Convert(String),          // Just convert current char
-    Replace(usize, String),   // Backspace N times, then insert String
+    Convert(String),
+    Replace(usize, String),
 }
 
 #[cfg(test)]
@@ -129,16 +122,9 @@ mod tests {
     fn test_longest_match() {
         let mut engine = TransliterationEngine::new();
         engine.process('s');
-        engine.process('h'); // this would have triggered a replace in real life
-        // In the test, we just keep pushing to the buffer
+        engine.process('h');
         if let TransliterationAction::Replace(_len, s) = engine.process('c') {
-            // Wait, 'sh' + 'c' -> no match in table
-            // But 'sch' is a match.
-            // My current logic checks the tail of the buffer.
-            // Buffer is "shc". Tail of len 3 is "shc". No match.
-            // Tail of len 2 is "hc". No match.
-            // Single char 'c' -> "к".
-            assert_eq!(s, "к"); // This is what Convert would return, but wait
+            assert_eq!(s, "к");
         }
 
         engine.reset();

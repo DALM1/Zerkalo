@@ -128,16 +128,12 @@ fn callback(proxy: CGEventTapProxy, _type: CGEventType, event: &CGEvent) -> Opti
                     }
                 }
                 TransliterationAction::None => {
-                    // Do nothing, but maybe the engine cleared the buffer
                 }
             }
         } else {
             ENGINE.lock().unwrap().reset();
         }
     } else {
-        // Non-character key (like backspace, enter, etc.)
-        // Keycodes for Backspace (51), Enter (36), Arrows (123-126), etc.
-        // For simplicity, reset on any non-unicode key
         ENGINE.lock().unwrap().reset();
     }
 
