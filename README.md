@@ -10,7 +10,7 @@
 - **Contrôle Total** : Activez ou désactivez la translittération instantanément avec un raccourci clavier.
 - **Léger** : Utilisation CPU et mémoire minimale.
 
-## ⚪️ Installation
+## Installation
 
 1. Assurez-vous d'avoir [Rust](https://rustup.rs/) installé sur votre Mac.
 2. Clonez le dépôt et entrez dans le dossier.
