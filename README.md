@@ -1,50 +1,50 @@
 # 🪞 Zerkalo
 
-**Zerkalo** (Зеркало - *Miroir*) est un démon macOS léger écrit en Rust qui permet une translittération phonétique du latin vers le cyrillique en temps réel à l'échelle du système.
+**Zerkalo** (Зеркало - *Mirror*) is a lightweight macOS daemon written in Rust that provides system-wide real-time phonetic transliteration from Latin to Cyrillic.
 
-## Fonctionnalités
+## Features
 
-- **Système global** : Fonctionne dans toutes les applications macOS (Navigateurs, IDE, Messageries).
-- **Zéro Latence** : Interception directe via Quartz Event Tap pour une réactivité maximale.
-- **Mapping Phonétique Intelligent** : Supporte les caractères simples et les séquences complexes (ex: `sh` -> `ш`, `shch` -> `щ`).
-- **Contrôle Total** : Activez ou désactivez la translittération instantanément avec un raccourci clavier.
-- **Léger** : Utilisation CPU et mémoire minimale.
+- **System-wide**: Works in all macOS applications (Browsers, IDEs, Messaging apps).
+- **Zero Latency**: Direct interception via Quartz Event Tap for maximum responsiveness.
+- **Intelligent Phonetic Mapping**: Supports single characters and complex sequences (e.g., `sh` -> `ш`, `shch` -> `щ`).
+- **Full Control**: Instantly enable or disable transliteration with a keyboard shortcut.
+- **Lightweight**: Minimal CPU and memory usage.
 
 ## Installation
 
-1. Assurez-vous d'avoir [Rust](https://rustup.rs/) installé sur votre Mac.
-2. Clonez le dépôt et entrez dans le dossier.
-3. Lancez le script d'installation :
+1. Ensure you have [Rust](https://rustup.rs/) installed on your Mac.
+2. Clone the repository and enter the directory.
+3. Run the installation script:
    ```bash
    ./install.sh
    ```
 
-## Permissions macOS
+## macOS Permissions
 
-Pour fonctionner, **Zerkalo** a besoin de l'accès à l'**Accessibilité** pour intercepter les touches du clavier :
+To function, **Zerkalo** requires **Accessibility** access to intercept keyboard input:
 
-1. Allez dans **Réglages Système** > **Confidentialité et sécurité** > **Accessibilité**.
-2. Ajoutez et activez votre **Terminal** (ou l'application qui lancera Zerkalo).
+1. Go to **System Settings** > **Privacy & Security** > **Accessibility**.
+2. Add and enable your **Terminal** (or the application that will launch Zerkalo).
 
-## Utilisation
+## Usage
 
-Lancez le programme via le script de lancement :
+Launch the program via the run script:
 ```bash
 ./run.sh
 ```
 
-- **Activer / Désactiver** : `Cmd` + `Alt` + `C`
-- **Quitter** : `Ctrl` + `C` dans le terminal.
+- **Enable / Disable**: `Cmd` + `Alt` + `C`
+- **Quit**: `Ctrl` + `C` in the terminal.
 
-## Table de Translittération
+## Transliteration Table
 
-Le mapping suit une logique phonétique standard. Pour plus de détails, consultez la [TRANSLATION_TABLE.md](./TRANSLATION_TABLE.md).
+The mapping follows standard phonetic logic. For more details, see [TRANSLATION_TABLE.md](./TRANSLATION_TABLE.md).
 
-Exemples :
+Examples:
 - `p` -> `п`
 - `r` -> `р`
 - `i` -> `и`
 - `v` -> `в`
 - `e` -> `е`
 - `t` -> `т`
-- Résultat : `privet` -> `привет`
+- Result: `privet` -> `привет`

@@ -1,0 +1,54 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*' # Triggers on tags like v0.1.0, v1.0.0, etc.
+
+jobs:
+  build-and-release:
+    name: Build and Release for macOS
+    runs-on: macos-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build release
+        run: cargo build --release
+
+      - name: Package binary
+        run: |
+          mkdir -p release
+          cp target/release/zerkalo release/
+          cp README.md release/
+          cp TRANSLATION_TABLE.md release/
+          cd release
+          zip -r ../zerkalo-macos.zip .
+          cd ..
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: zerkalo-macos.zip
+          name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          body: |
+            ## Zerkalo Release ${{ github.ref_name }}
+
+            ### ⚪️ Installation
+            1. Download `zerkalo-macos.zip`
+            2. Extract the archive
+            3. Grant Accessibility permissions in System Settings
+            4. Run the binary `./zerkalo`
+
+            ### ⚪️ Reminder
+            - Shortcut: `Cmd + Alt + C` to enable/disable.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,44 +1,44 @@
 #!/bin/bash
 
 # Zerkalo Installation Script
-# Ce script compile le projet et fournit les instructions pour les permissions.
+# This script compiles the project and provides instructions for permissions.
 
 set -e
 
-echo "⚪️ Initialisation de Zerkalo..."
+echo "⚪️ Initializing Zerkalo..."
 
-# Vérification de l'installation de Rust
+# Check if Rust is installed
 if ! command -v cargo &> /dev/null
 then
-    echo "⚫️ Erreur: Rust/Cargo n'est pas installé. Veuillez l'installer via https://rustup.rs/"
+    echo "⚫️ Error: Rust/Cargo is not installed. Please install it via https://rustup.rs/"
     exit 1
 fi
 
-echo "⚪️ Compilation du projet en mode release..."
+echo "⚪️ Compiling project in release mode..."
 cargo build --release
 
 BINARY_PATH="target/release/zerkalo"
 
 if [ -f "$BINARY_PATH" ]; then
-    echo "⚪️ Compilation réussie"
+    echo "⚪️ Compilation successful"
     echo ""
-    echo "⚪️ IMPORTANT : macOS nécessite des permissions spéciales pour intercepter le clavier."
-    echo "1. Allez dans Réglages Système > Confidentialité et sécurité > Accessibilité."
-    echo "2. Ajoutez et activez votre Terminal (ou l'application qui lancera Zerkalo)."
+    echo "⚪️ IMPORTANT: macOS requires special permissions to intercept keyboard input."
+    echo "1. Go to System Settings > Privacy & Security > Accessibility."
+    echo "2. Add and enable your Terminal (or the application that will launch Zerkalo)."
     echo ""
-    echo "⚪️ Raccourci : Cmd + Alt + C pour activer/désactiver la translittération."
+    echo "⚪️ Shortcut: Cmd + Alt + C to enable/disable transliteration."
     echo ""
 
-    read -p "⚪️ Voulez-vous lancer Zerkalo directement ? (y/n) " choice
+    read -p "⚪️ Would you like to launch Zerkalo now? (y/n) " choice
     case "$choice" in
       y|Y )
         ./run.sh
         ;;
       * )
-        echo "⚪️ Installation terminée. Vous pourrez lancer le programme plus tard avec ./run.sh"
+        echo "⚪️ Installation complete. You can launch the program later with ./run.sh"
         ;;
     esac
 else
-    echo "⚫️ Erreur: Échec de la compilation."
+    echo "⚫️ Error: Compilation failed."
     exit 1
 fi
