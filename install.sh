@@ -18,9 +18,20 @@ echo "⚪️ Compiling project in release mode..."
 cargo build --release
 
 BINARY_PATH="target/release/zerkalo"
+ALIAS_SCRIPT="./add_alias.sh"
 
 if [ -f "$BINARY_PATH" ]; then
     echo "⚪️ Compilation successful"
+    echo ""
+    if [ -f "$ALIAS_SCRIPT" ]; then
+        echo "⚪️ Configuring the 'zerkalo' alias..."
+        "$ALIAS_SCRIPT"
+        echo ""
+    else
+        echo "⚫️ Warning: add_alias.sh was not found, alias setup was skipped."
+        echo ""
+    fi
+    echo "⚪️ You can then launch the app from a new terminal with: zerkalo"
     echo ""
     echo "⚪️ IMPORTANT: macOS requires special permissions to intercept keyboard input."
     echo "1. Go to System Settings > Privacy & Security > Accessibility."
