@@ -18,6 +18,7 @@
    ```bash
    ./install.sh
    ```
+4. The installer compiles Zerkalo, installs a macOS `LaunchAgent`, and configures the optional `zerkalo` shell alias.
 
 ## macOS Permissions
 
@@ -28,13 +29,16 @@ To function, **Zerkalo** requires **Accessibility** access to intercept keyboard
 
 ## Usage
 
-Launch the program via the run script:
+Zerkalo is designed to run automatically in the background after installation through a macOS `LaunchAgent`.
+
+You can also launch it manually via the run script:
 ```bash
 ./run.sh
 ```
 
-- **Enable / Disable**: `Cmd` + `Alt` + `C`
-- **Quit**: `Ctrl` + `C` in the terminal.
+- **Enable / Disable transliteration**: `Cmd` + `Ctrl` + `Z`
+- **Quit the daemon**: press `Esc` 5 times in a row
+- **Why the hotkey did not start the app before**: a global shortcut only works when a background process is already listening. The installer now sets up that background process automatically.
 
 ## Transliteration Table
 

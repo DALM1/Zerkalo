@@ -7,7 +7,8 @@ use core_graphics::event::{
     CGEventTapPlacement, CGEventType, CGEventTapProxy,
 };
 use core_graphics::event_source::{CGEventSource, CGEventSourceStateID};
-use std::sync::atomic::{AtomicBool, Ordering};
+use std::process;
+use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
 use std::sync::Mutex;
 use transliteration::{TransliterationEngine, TransliterationAction};
 use lazy_static::lazy_static;
@@ -33,9 +34,16 @@ lazy_static! {
 }
 
 static ENABLED: AtomicBool = AtomicBool::new(true);
+static ESC_PRESS_COUNT: AtomicUsize = AtomicUsize::new(0);
+
+const KEYBOARD_EVENT_KEYCODE_FIELD: u32 = 9;
+const KEYCODE_Z: i64 = 6;
+const KEYCODE_ESCAPE: i64 = 53;
+const ESC_PRESSES_TO_QUIT: usize = 5;
 
 fn main() {
-    println!("Zerkalo started. Press Cmd+Alt+C to toggle.");
+    println!("Zerkalo started. Press Cmd+Ctrl+Z to toggle transliteration.");
+    println!("Press Esc 5 times in a row to quit.");
 
     let current = CGEventTapLocation::HID;
     let tap = match CGEventTap::new(
@@ -72,11 +80,22 @@ fn post_backspace(proxy: CGEventTapProxy) {
 
 fn callback(proxy: CGEventTapProxy, _type: CGEventType, event: &CGEvent) -> Option<CGEvent> {
     let flags = event.get_flags();
+    let key_code = event.get_integer_value_field(KEYBOARD_EVENT_KEYCODE_FIELD);
 
-    // Toggle logic: Cmd + Alt + C
-    let key_code = event.get_integer_value_field(9); // kCGKeyboardEventKeycode
+    if key_code == KEYCODE_ESCAPE {
+        let esc_count = ESC_PRESS_COUNT.fetch_add(1, Ordering::SeqCst) + 1;
+        if esc_count >= ESC_PRESSES_TO_QUIT {
+            println!("Zerkalo stopped after 5 Esc presses.");
+            process::exit(0);
+        }
+    } else {
+        ESC_PRESS_COUNT.store(0, Ordering::SeqCst);
+    }
 
-    if key_code == 8 && flags.contains(CGEventFlags::CGEventFlagCommand | CGEventFlags::CGEventFlagAlternate) {
+    // Toggle logic: Cmd + Ctrl + Z
+    if key_code == KEYCODE_Z
+        && flags.contains(CGEventFlags::CGEventFlagCommand | CGEventFlags::CGEventFlagControl)
+    {
         let new_state = !ENABLED.load(Ordering::SeqCst);
         ENABLED.store(new_state, Ordering::SeqCst);
         println!("Zerkalo {}", if new_state { "ENABLED" } else { "DISABLED" });

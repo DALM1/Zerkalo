@@ -19,10 +19,19 @@ cargo build --release
 
 BINARY_PATH="target/release/zerkalo"
 ALIAS_SCRIPT="./add_alias.sh"
+LAUNCH_AGENT_SCRIPT="./install_launch_agent.sh"
 
 if [ -f "$BINARY_PATH" ]; then
     echo "⚪️ Compilation successful"
     echo ""
+    if [ -f "$LAUNCH_AGENT_SCRIPT" ]; then
+        echo "⚪️ Installing the macOS background service..."
+        "$LAUNCH_AGENT_SCRIPT"
+        echo ""
+    else
+        echo "⚫️ Warning: install_launch_agent.sh was not found, background auto-start was skipped."
+        echo ""
+    fi
     if [ -f "$ALIAS_SCRIPT" ]; then
         echo "⚪️ Configuring the 'zerkalo' alias..."
         "$ALIAS_SCRIPT"
@@ -32,12 +41,14 @@ if [ -f "$BINARY_PATH" ]; then
         echo ""
     fi
     echo "⚪️ You can then launch the app from a new terminal with: zerkalo"
+    echo "⚪️ Zerkalo also starts automatically in the background after login."
     echo ""
     echo "⚪️ IMPORTANT: macOS requires special permissions to intercept keyboard input."
     echo "1. Go to System Settings > Privacy & Security > Accessibility."
-    echo "2. Add and enable your Terminal (or the application that will launch Zerkalo)."
+    echo "2. Add and enable your Terminal, or the installed Zerkalo background service if macOS prompts for it."
     echo ""
-    echo "⚪️ Shortcut: Cmd + Alt + C to enable/disable transliteration."
+    echo "⚪️ Shortcut: Cmd + Ctrl + Z to enable/disable transliteration."
+    echo "⚪️ Quit the program by pressing Esc 5 times in a row."
     echo ""
 
     read -p "⚪️ Would you like to launch Zerkalo now? (y/n) " choice
