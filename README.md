@@ -18,27 +18,38 @@
    ```bash
    ./install.sh
    ```
-4. The installer compiles Zerkalo, installs a macOS `LaunchAgent`, and configures the optional `zerkalo` shell alias.
+4. The installer compiles Zerkalo, installs a macOS `LaunchAgent` for automatic startup at login, and configures the optional `zerkalo` shell alias.
 
 ## macOS Permissions
 
-To function, **Zerkalo** requires **Accessibility** access to intercept keyboard input:
+To function, **Zerkalo** may require both **Accessibility** and **Input Monitoring** access:
 
 1. Go to **System Settings** > **Privacy & Security** > **Accessibility**.
-2. Add and enable your **Terminal** (or the application that will launch Zerkalo).
+2. Add and enable this installed binary:
+   ```text
+   ~/Applications/Zerkalo.app
+   ```
+3. Go to **System Settings** > **Privacy & Security** > **Input Monitoring**.
+4. Add and enable the same app there too if macOS prompts for it:
+   ```text
+   ~/Applications/Zerkalo.app
+   ```
+5. After granting the permission, relaunch Zerkalo without reinstalling first.
+6. Reinstalling can make macOS ask for the permission again for the installed app bundle.
+7. If you also run Zerkalo manually from Trae/Terminal, keep your terminal app enabled too.
 
 ## Usage
 
-Zerkalo is designed to run automatically in the background after installation through a macOS `LaunchAgent`.
+Zerkalo is designed to run automatically in the background after installation through a macOS `LaunchAgent`, and the app manager listens for the global shortcut at all times.
 
 You can also launch it manually via the run script:
 ```bash
 ./run.sh
 ```
 
-- **Enable / Disable transliteration**: `Cmd` + `Ctrl` + `Z`
-- **Quit the daemon**: press `Esc` 5 times in a row
-- **Why the hotkey did not start the app before**: a global shortcut only works when a background process is already listening. The installer now sets up that background process automatically.
+- **Start / Stop transliteration**: `Alt` + `Esc`
+- **Close and relaunch Zerkalo**: press `Esc` 5 times in a row, then use `Alt` + `Esc` to launch it again
+- **Background behavior**: the manager stays loaded in the background so the shortcut can launch the transliteration worker whenever you need it
 
 ## Transliteration Table
 

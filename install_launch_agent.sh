@@ -3,9 +3,14 @@
 set -e
 
 PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
-BINARY_PATH="$PROJECT_DIR/target/release/zerkalo"
+APP_DIR="$HOME/Applications/Zerkalo.app"
+BINARY_PATH="$APP_DIR/Contents/MacOS/zerkalo"
+OPEN_PATH="/usr/bin/open"
 PLIST_DIR="$HOME/Library/LaunchAgents"
 PLIST_PATH="$PLIST_DIR/com.zerkalo.daemon.plist"
+LABEL="com.zerkalo.daemon"
+UID_VALUE="$(id -u)"
+DOMAIN_TARGET="gui/$UID_VALUE"
 LOG_DIR="$HOME/Library/Logs/Zerkalo"
 STDOUT_LOG="$LOG_DIR/stdout.log"
 STDERR_LOG="$LOG_DIR/stderr.log"
@@ -15,7 +20,14 @@ if [ ! -f "$BINARY_PATH" ]; then
     exit 1
 fi
 
+if [ ! -x "$OPEN_PATH" ]; then
+    echo "⚫️ Error: open was not found at $OPEN_PATH"
+    exit 1
+fi
+
 mkdir -p "$PLIST_DIR" "$LOG_DIR"
+: > "$STDOUT_LOG"
+: > "$STDERR_LOG"
 
 cat > "$PLIST_PATH" <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
@@ -23,18 +35,22 @@ cat > "$PLIST_PATH" <<EOF
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>com.zerkalo.daemon</string>
+    <string>$LABEL</string>
 
     <key>ProgramArguments</key>
     <array>
-        <string>$BINARY_PATH</string>
+        <string>$OPEN_PATH</string>
+        <string>-gja</string>
+        <string>$APP_DIR</string>
     </array>
 
     <key>RunAtLoad</key>
     <true/>
 
-    <key>KeepAlive</key>
-    <true/>
+    <key>LimitLoadToSessionType</key>
+    <array>
+        <string>Aqua</string>
+    </array>
 
     <key>WorkingDirectory</key>
     <string>$PROJECT_DIR</string>
@@ -48,10 +64,30 @@ cat > "$PLIST_PATH" <<EOF
 </plist>
 EOF
 
-launchctl bootout "gui/$(id -u)/com.zerkalo.daemon" >/dev/null 2>&1 || true
-launchctl bootstrap "gui/$(id -u)" "$PLIST_PATH"
-launchctl kickstart -k "gui/$(id -u)/com.zerkalo.daemon"
+if ! plutil -lint "$PLIST_PATH" >/dev/null; then
+    echo "⚫️ Error: LaunchAgent plist is invalid: $PLIST_PATH"
+    exit 1
+fi
+
+launchctl bootout "$DOMAIN_TARGET/$LABEL" >/dev/null 2>&1 || true
+launchctl bootout "$DOMAIN_TARGET" "$PLIST_PATH" >/dev/null 2>&1 || true
+launchctl unload "$PLIST_PATH" >/dev/null 2>&1 || true
+pkill -f "$BINARY_PATH" >/dev/null 2>&1 || true
+
+if launchctl bootstrap "$DOMAIN_TARGET" "$PLIST_PATH" >/dev/null 2>&1; then
+    launchctl kickstart -k "$DOMAIN_TARGET/$LABEL" >/dev/null 2>&1 || true
+elif launchctl load "$PLIST_PATH" >/dev/null 2>&1; then
+    :
+else
+    echo "⚫️ Error: Failed to load the macOS background service automatically."
+    echo "⚪️ Try these commands manually:"
+    echo "   plutil -lint \"$PLIST_PATH\""
+    echo "   launchctl unload \"$PLIST_PATH\" >/dev/null 2>&1 || true"
+    echo "   launchctl load \"$PLIST_PATH\""
+    exit 1
+fi
 
 echo "⚪️ LaunchAgent installed at $PLIST_PATH"
 echo "⚪️ Zerkalo will now start automatically at login."
-echo "⚪️ If permissions are still missing, add the launched binary to Accessibility if needed."
+echo "⚪️ The background service now launches the app through LaunchServices for macOS permission support."
+echo "⚪️ If permissions are still missing, add the installed app to Accessibility if needed: $APP_DIR"

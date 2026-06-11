@@ -3,14 +3,19 @@
 set -e
 
 PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
+INSTALLED_BINARY="$HOME/Applications/Zerkalo.app/Contents/MacOS/zerkalo"
 RUN_SCRIPT="$PROJECT_DIR/run.sh"
 
-if [ ! -f "$RUN_SCRIPT" ]; then
-    echo "⚫️ Error: run.sh was not found."
+if [ -f "$INSTALLED_BINARY" ]; then
+    ALIAS_TARGET="$INSTALLED_BINARY"
+elif [ -f "$RUN_SCRIPT" ]; then
+    ALIAS_TARGET="$RUN_SCRIPT"
+else
+    echo "⚫️ Error: neither the installed binary nor run.sh was found."
     exit 1
 fi
 
-ALIAS_LINE="alias zerkalo='\"$RUN_SCRIPT\"'"
+ALIAS_LINE="alias zerkalo='\"$ALIAS_TARGET\"'"
 TARGET_RC=""
 
 if [ -n "$ZSH_VERSION" ] || [ "$(basename "${SHELL:-}")" = "zsh" ]; then

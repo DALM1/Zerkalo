@@ -49,7 +49,7 @@ jobs:
             4. Run the binary `./zerkalo`
 
             ### ⚪️ Reminder
-            - Shortcut: `Cmd + Ctrl + Z` to enable/disable transliteration.
+            - Shortcut: `Alt + Esc` to enable/disable transliteration.
             - Quit the daemon by pressing `Esc` 5 times in a row.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

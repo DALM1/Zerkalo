@@ -130,4 +130,5 @@ dependencies = [
  "core-graphics",
  "foreign-types-shared",
  "lazy_static",
+ "libc",
 ]
